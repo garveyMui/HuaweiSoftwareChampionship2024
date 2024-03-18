@@ -60,6 +60,6 @@ char Position::get_symbol() {
     return base_DS::ch[this->x][this->y];
 }
 
-size_t PositionHash::operator()(Position &p) const {
+size_t PositionHash::operator()(const Position &p) const {
     return std::hash<int>()(p.x) ^ std::hash<int>()(p.y);
 }
