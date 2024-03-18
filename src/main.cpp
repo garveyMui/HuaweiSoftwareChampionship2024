@@ -11,6 +11,7 @@
 #include "utils_debug.h"
 #include "assign_berth.h"
 #include <climits>
+#include <fstream>
 /**
  * 初始化
  */
@@ -42,7 +43,7 @@ namespace base_DS {
     }
 
 namespace flag{
-    bool debug = false;
+    bool debug = true;
 }
 
 void Init()
@@ -107,7 +108,7 @@ void Init()
     //初始化机器人负责的港口，暂时定一人一个
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
 //    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
-    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map1
+    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,4}; // map1
 //    vector<int> berth_id = {0,0,3,3,3,4,8,8,9,9}; // map-3.9
 //    vector<int> berth_id = {2,2,3,3,4,4,6,6,7,7}; // map-3.10
 
@@ -261,7 +262,27 @@ int main()
             d.restore(); //当前帧即恢复
             puts("OK");
             fflush(stdout);
+            if (flag::debug){
+                std::ofstream file("money.txt", std::ios::out | std::ios::app);
+                file << "id " << base_DS::id << endl;
+                file << "current_money " << base_DS::money << endl;
+                file.close();
 
+                if (base_DS::id == 14500 || base_DS::id == 15000){
+                    int sum = 0;
+                    for(int i = 0; i < base_DS::berth_num; i++){
+                        auto copy = base_DS::berth[i].queue_goods_value;
+                        while(!copy.empty()){
+                            sum += copy.front();
+                            copy.pop();
+                        }
+                    }
+                    std::ofstream file("value_leaf.txt", std::ios::out | std::ios::app);
+                    file << "id " << base_DS::id << endl;
+                    file << "value_leaf " << sum << endl;
+                    file.close();
+                }
+            }
         }
 
     return 0;

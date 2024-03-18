@@ -11,8 +11,10 @@ public:
     int id_dest_on_the_way;  // 物理泊位、虚拟点则为-1
     int id_dest_in_plan=-1;  // 计划泊位、虚拟点则为-1
     int status;  // 0：运输中、1：装货或运输完成、2：泊位外排队
+    int last_status = 1;
     int load = 0;//记录装载的货物数量
     int id_boat;
+    bool final_change = false;
     Boat(int capacity_boat, int pos, int status);
     Boat(int capacity_boat, int id_boat);
     Boat();

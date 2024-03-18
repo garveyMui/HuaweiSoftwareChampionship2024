@@ -89,14 +89,21 @@ void update_boat_status (int sts, int pos, Boat& boat, int boat_id){
     // 更新计划泊位，不用考虑虚拟点，那个在should_go内自动实现
     // 在排队就换但是实际上可以加别的逻辑
 
-    if ((boat.status == 1 && boat.id_dest_on_the_way == -1)||(boat.status == 2)){
-        if (boat.status == 1 && boat.id_dest_on_the_way == -1)  {
-            boat.load = 0;
-        }    //船到虚拟点,清空载货
+//    if ((boat.status == 1 && boat.id_dest_on_the_way == -1)||(boat.status == 2)){
+//        if (boat.status == 1 && boat.id_dest_on_the_way == -1)  {
+//            boat.load = 0;
+//        }    //船到虚拟点,清空载货
+//
+//       if (base_DS::id > 1){
+//           boat.id_dest_in_plan = choose_a_berth(boat);
+//       }
+//    }
+    if (boat.status == 1 && boat.id_dest_on_the_way == -1)  {
+        boat.load = 0;
+    }    //船到虚拟点,清空载货
 
-       if (base_DS::id > 1){
-           boat.id_dest_in_plan = choose_a_berth(boat);
-       }
+    if (base_DS::id > 1){
+        boat.id_dest_in_plan = choose_a_berth(boat);
     }
 }
 

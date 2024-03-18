@@ -48,7 +48,7 @@ int choose_a_berth(Robot& robot){
 
 // 经验上每70帧一个货物
 // 排队结束时间短，货物价值大
-using un_l_l = unsigned long long;
+//using un_l_l = unsigned long long;
 //bool berth_compare(pair<int, pair<un_l_l ,un_l_l>>& a, pair<int , pair<un_l_l ,un_l_l>>& b) {
 //    pair<un_l_l ,un_l_l> a_value = a.second;
 //    pair<un_l_l ,un_l_l> b_value = b.second;

@@ -18,6 +18,7 @@ Boat::Boat(int capacity_boat, int id_boat):capacity(capacity_boat), id_boat(id_b
 }
 
 void Boat::update(int status, int id_dest_on_the_way) {
+    this->last_status = this->status;
     this->status = status;
     this->id_dest_on_the_way = id_dest_on_the_way;
 }
