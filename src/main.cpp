@@ -61,7 +61,6 @@ void Init()
         scanf("%s", base_DS::ch[i]);
     }
 
-
     // 初始化静态方向
     // 0右 1左 2上 3下
     std::vector<Direction> directions = {{0,1},{0,-1},{-1,0},{1,0}};
@@ -107,7 +106,8 @@ void Init()
     //初始化机器人负责的港口，暂时定一人一个
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
 //    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
-    vector<int> berth_id = {0,0,3,3,3,4,8,8,9,9}; // map-3.9
+//    vector<int> berth_id = {0,0,3,3,3,4,8,8,9,9}; // map-3.9
+    vector<int> berth_id = {2,2,3,3,4,4,6,6,7,7}; // map-3.10
     for(int i = 0; i < base_DS::robot_num; i ++) {
 //        assign_berth(base_DS::robot[i]);
         base_DS::robot[i]._set_destinations({base_DS::berth[berth_id[i]]});

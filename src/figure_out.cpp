@@ -33,6 +33,14 @@ void Figure_out::do_figure_out() {
 
         // 目的地是负责港口
         if (Berth::in_certain_berth(robot.current_dest)){
+//            // 尽可能回原港口
+//            auto res = getter.shortestPath(robot.posi, robot.current_dest,-1); // -1:exactly
+//            robot.path = res.second;
+//            // 随便找一个港口
+//            if (res.first < 0){
+//                res = getter.shortestPath(robot.posi, robot.current_dest,0); // 0:berth
+//                robot.path = res.second;
+//            }
             // 随便找一个港口
             auto res = getter.shortestPath(robot.posi, robot.current_dest,0); // 0:berth
             robot.path = res.second;
