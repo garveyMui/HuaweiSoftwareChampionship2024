@@ -36,7 +36,7 @@ public:
 
 //自定义哈希函数
 struct PositionHash{
-    size_t operator()(Position& p) const;
+    size_t operator()(const Position& p) const;
 };
 
 

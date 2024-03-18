@@ -45,7 +45,7 @@ public:
 
     /*以下0318新加，未实现*/
     vector<vector<APosition>> cells; // 用于存储从港口到其它可达点的路径，可参考get_shortest_path
-    int R; // 港口一定半径
+    int R = 20; // 港口一定半径
     unordered_map<Position, int, PositionHash> territories;  // 一定半径内所有可达点的坐标与对应货品价值，不考虑相交问题
                                                 // 相交问题需要全部港口信息，因此不能作为成员变量，
                                                 // 相交问题都交给get_init_berth_id, get_revolved_berth_id解决
