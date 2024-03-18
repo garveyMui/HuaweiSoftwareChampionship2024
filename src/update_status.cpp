@@ -94,7 +94,7 @@ void update_boat_status (int sts, int pos, Boat& boat, int boat_id){
             boat.load = 0;
         }    //船到虚拟点,清空载货
 
-       if (base_DS::id > 600){
+       if (base_DS::id > 1){
            boat.id_dest_in_plan = choose_a_berth(boat);
        }
     }

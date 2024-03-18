@@ -61,10 +61,10 @@ using un_l_l = unsigned long long;
 //    }
 //}
 
-double _get_compare_value(pair<queue<int> ,un_l_l>& a_key){
+double _get_compare_value(pair<queue<int> ,double>& a_key){
     int mean_value_per_goods = 50;
     int mean_frames_per_goods = 70;
-    double value_pending_a = a_key.second*1. / mean_frames_per_goods*1. * mean_value_per_goods;
+    double value_pending_a = -a_key.second*1. / mean_frames_per_goods*1. * mean_value_per_goods;
     for (int i = 0; i < a_key.second; i++){
         if (a_key.first.empty()){
             break;
@@ -72,16 +72,16 @@ double _get_compare_value(pair<queue<int> ,un_l_l>& a_key){
             a_key.first.pop();
         }
     }
-    while(a_key.first.empty()){
+    while(!a_key.first.empty()){
         value_pending_a += a_key.first.front();
         a_key.first.pop();
     }
     return value_pending_a;
 }
 
-bool berth_compare(pair<int, pair<queue<int> ,un_l_l>>& a, pair<int , pair<queue<int> ,un_l_l>>& b) {
-    pair<queue<int> ,un_l_l> a_key = a.second; // 需要深拷贝吗
-    pair<queue<int> ,un_l_l> b_key = b.second;
+bool berth_compare(pair<int, pair<queue<int> ,double>>& a, pair<int , pair<queue<int> ,double>>& b) {
+    pair<queue<int> ,double> a_key = a.second; // 需要深拷贝吗
+    pair<queue<int> ,double> b_key = b.second;
     // a_key.first 待载货物价值队列
     // a_key.second 预计耗时
     double value_pending_a = _get_compare_value(a_key);
@@ -96,7 +96,7 @@ int choose_a_berth(Boat boat){
     std::vector<Berth>& berths = base_DS::berth;
     std::vector<Boat>& boats = base_DS::boat;
 
-    std::vector<pair<int, pair<queue<int> ,un_l_l>>> berth_goods_boats_num(berths.size(), {0, {{}, 0}});
+    std::vector<pair<int, pair<queue<int> ,double>>> berth_goods_boats_num(berths.size(), {0, {{}, 0}});
     int capacity = boats.front().capacity;
 
     if(boat.status == 0 && boat.id_dest_in_plan == -1){//回城船，目前不进行分配

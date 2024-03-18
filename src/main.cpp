@@ -106,7 +106,8 @@ void Init()
 
     //初始化机器人负责的港口，暂时定一人一个
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
-    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
+//    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
+    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map1
 //    vector<int> berth_id = {0,0,3,3,3,4,8,8,9,9}; // map-3.9
 //    vector<int> berth_id = {2,2,3,3,4,4,6,6,7,7}; // map-3.10
 
