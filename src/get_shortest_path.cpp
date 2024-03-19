@@ -122,7 +122,7 @@ pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Posi
     q.push(start);
     visited[start.x][start.y] = true;
 
-    int max_level = 0; // 寻找高价值货物的超参数
+    int max_level = 60; // 寻找高价值货物的超参数
     // 0:  195282
     // 5:  194240
     // 10: 194932
@@ -130,6 +130,7 @@ pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Posi
     // 30: 192068
     // 40: 191278
     int max_value = 44; // 寻找货物时记录
+    double value_per_level = -1;
     Position max_value_posi;
     int cur_level = 0;
     Position mark = q.front();
@@ -145,6 +146,7 @@ pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Posi
                 return {res.size() - 1, res}; // 返回路径长度和路径
             }else{
                 int cur_value = base_DS::goods[current.x][current.y].value;
+                // 一定层数内最大价值
 //                if (cur_value > max_value){
 //                    max_value = cur_value;
 //                    max_value_posi = current;
@@ -154,12 +156,22 @@ pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Posi
 //                    end = max_value_posi;
 //                    return {res.size() - 1, res}; // 返回路径长度和路径
 //                }
+                // 价值高于一定阈值的第一个
                 if (cur_value >= max_value){
                     max_value_posi = current;
                     auto res = reconstructPath(&cells[max_value_posi.x][max_value_posi.y]);
                     end = max_value_posi;
                     return {res.size() - 1, res}; // 返回路径长度和路径
                 }
+                // 一定层数内最大(价值/距离)
+//                if ((cur_value*1.)/(cur_level*1.) >= value_per_level){
+//                    max_value_posi = current;
+//                }
+//                if (cur_level>=max_level){
+//                    auto res = reconstructPath(&cells[max_value_posi.x][max_value_posi.y]);
+//                    end = max_value_posi;
+//                    return {res.size() - 1, res}; // 返回路径长度和路径
+//                }
             }
         }
 
