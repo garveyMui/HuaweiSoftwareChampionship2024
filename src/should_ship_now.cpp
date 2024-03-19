@@ -16,6 +16,10 @@ bool should_ship_now(Boat& boat){
         return true;
     }
 
+//    if(base_DS::id > 10000){
+//        return false;
+//    }
+
     // 计划泊位有更多货物，且移动消耗是值得的
     int move_between_berths = 500;
     int mean_value_per_goods = 50;

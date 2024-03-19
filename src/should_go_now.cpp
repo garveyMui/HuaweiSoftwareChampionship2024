@@ -27,7 +27,7 @@ bool should_go_now (Boat boat){
     if(boat.id_dest_on_the_way == -1){//位于虚拟点
         return false;
     }
-    if(15000 - frame == berths[boat.id_dest_on_the_way].transport_time + 1){//剩余时间不足
+    if(15000 - frame <= berths[boat.id_dest_on_the_way].transport_time + 1){//剩余时间不足
         return true;
     }
     if(boat.load >= boat.capacity){ //货物已满载
