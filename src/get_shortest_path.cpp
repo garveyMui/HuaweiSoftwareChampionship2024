@@ -129,7 +129,7 @@ pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Posi
     // 20: 193612
     // 30: 192068
     // 40: 191278
-    int max_value = 88; // 寻找货物时记录
+    int max_value = 44; // 寻找货物时记录
     Position max_value_posi;
     int cur_level = 0;
     Position mark = q.front();
