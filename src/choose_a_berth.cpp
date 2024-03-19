@@ -89,6 +89,25 @@ bool berth_compare(pair<int, pair<queue<int> ,double>>& a, pair<int , pair<queue
     return value_pending_a > value_pending_b;
 }
 
+class Matrice{
+public:
+    int num_goods;
+    int loading_speed;
+    int transport_time;
+    int before_capacity;
+    Matrice(){
+        this->num_goods;
+    }
+    double get_result(){
+        double result = 0;
+        result = (1+this->num_goods)/(this->loading_speed*1./5);
+        result /= (this->transport_time/1000.0 + this->before_capacity*17.0/this->loading_speed); // 85/5==17
+        return result;
+    }
+};
+bool berth_compare_at_imagine(pair<int, Matrice>&a, pair<int, Matrice>&b){
+    return a.second.get_result() > b.second.get_result();
+}
 // 没有考虑行船时间
 int choose_a_berth(Boat boat){
 //    vector<int> berth_id = {0,1,6,8,9};
@@ -96,48 +115,78 @@ int choose_a_berth(Boat boat){
     std::vector<Berth>& berths = base_DS::berth;
     std::vector<Boat>& boats = base_DS::boat;
 
-    std::vector<pair<int, pair<queue<int> ,double>>> berth_goods_boats_num(berths.size(), {0, {{}, 0}});
     int capacity = boats.front().capacity;
 
     if(boat.status == 0 && boat.id_dest_in_plan == -1){//回城船，目前不进行分配
         return -1;
     }
-
-    for(int i = 0; i < berths.size(); i++){
-        berth_goods_boats_num[i].first = i;
-        // 统计待载货物价值
-        queue<int> queue_i = berths[i].queue_goods_value;
-        berth_goods_boats_num[i].second.first = queue_i;
-        // 统计预计耗时
-        berth_goods_boats_num[i].second.second += berths[i].queue_boats.size()*capacity;
-        if (berths[i].id_boat_in_berth != -1){
-            berth_goods_boats_num[i].second.second += (capacity-boats[berths[i].id_boat_in_berth].load);
+    // 虚拟点的船额外考虑行船时间帧消耗
+    if (boat.status==1 && boat.id_dest_on_the_way==-1){
+        std::vector<pair<int, Matrice>> berth_goods_boats_num(berths.size());
+        for(int i = 0; i < berths.size(); i++){
+            berth_goods_boats_num[i].first = i;
+            berth_goods_boats_num[i].second.num_goods = berths[i].queue_goods_value.size();
+            berth_goods_boats_num[i].second.loading_speed = berths[i].loading_speed;
+            berth_goods_boats_num[i].second.transport_time = berths[i].transport_time;
+            //停靠或在该港口排队的船
+            berth_goods_boats_num[i].second.before_capacity = berths[i].queue_boats.size()*capacity;
+            if (berths[i].id_boat_in_berth != -1){
+                berth_goods_boats_num[i].second.before_capacity += (capacity-boats[berths[i].id_boat_in_berth].load);
+            }
         }
-    }
-
-    for (int i = 0; i < boats.size(); i++) {
-        if (i != boat.id_boat && boats[i].id_dest_on_the_way != -1) { //其它实际前往该港口的船
-            berth_goods_boats_num[boats[i].id_dest_on_the_way].second.second+=capacity;
+        for (int i = 0; i < boats.size(); i++) {
+            if (i != boat.id_boat && boats[i].id_dest_on_the_way != -1) { //其它实际前往该港口的船
+                berth_goods_boats_num[boats[i].id_dest_on_the_way].second.before_capacity+=capacity;
+            }
         }
-    }
-
-    for (int i = 0; i < boat.id_boat; i++) {
-        if (boats[i].id_dest_in_plan != -1) {  //其它计划前往该港口的船
-            berth_goods_boats_num[boats[i].id_dest_in_plan].second.second+=capacity;
+        for (int i = 0; i < boat.id_boat; i++) {
+            if (boats[i].id_dest_in_plan != -1) {  //其它计划前往该港口的船
+                berth_goods_boats_num[boats[i].id_dest_in_plan].second.before_capacity+=capacity;
+            }
         }
-    }
+        std::sort(berth_goods_boats_num.begin(), berth_goods_boats_num.end(), berth_compare_at_imagine);
+        int choose_berth_index = berth_goods_boats_num[0].first;
+        return choose_berth_index;
+    }else{
+        // 港口间调度
+        std::vector<pair<int, pair<queue<int> ,double>>> berth_goods_boats_num(berths.size(), {0, {{}, 0}});
+        for(int i = 0; i < berths.size(); i++){
+            berth_goods_boats_num[i].first = i;
+            // 统计待载货物价值
+            queue<int> queue_i = berths[i].queue_goods_value;
+            berth_goods_boats_num[i].second.first = queue_i;
+            // 统计预计耗时
+            berth_goods_boats_num[i].second.second += berths[i].queue_boats.size()*capacity;
+            if (berths[i].id_boat_in_berth != -1){
+                berth_goods_boats_num[i].second.second += (capacity-boats[berths[i].id_boat_in_berth].load);
+            }
+        }
 
-    for(int i = 0; i < berths.size(); i++){
-        berth_goods_boats_num[i].second.second /= berths[i].loading_speed;
-    }
+        for (int i = 0; i < boats.size(); i++) {
+            if (i != boat.id_boat && boats[i].id_dest_on_the_way != -1) { //其它实际前往该港口的船
+                berth_goods_boats_num[boats[i].id_dest_on_the_way].second.second+=capacity;
+            }
+        }
 
-    std::sort(berth_goods_boats_num.begin(), berth_goods_boats_num.end(), berth_compare);
-    int choose_berth_index = berth_goods_boats_num[0].first;
+        for (int i = 0; i < boat.id_boat; i++) {
+            if (boats[i].id_dest_in_plan != -1) {  //其它计划前往该港口的船
+                berth_goods_boats_num[boats[i].id_dest_in_plan].second.second+=capacity;
+            }
+        }
+
+        for(int i = 0; i < berths.size(); i++){
+            berth_goods_boats_num[i].second.second /= berths[i].loading_speed;
+        }
+        std::sort(berth_goods_boats_num.begin(), berth_goods_boats_num.end(), berth_compare);
+        int choose_berth_index = berth_goods_boats_num[0].first;
 
 //    if (berth_goods_boats_num[0].second.second > 85) return -1;  //选出的港口需要很久才能入港，无需重新调度
-    if (berth_goods_boats_num[0].second.first.empty()) return -1;  //所有港口都没有货物,无需调度
+        if (berth_goods_boats_num[0].second.first.empty()) return -1;  //所有港口都没有货物,无需调度
 
-    return choose_berth_index;
+        return choose_berth_index;
+    }
+
+
 }
 
 //int choose_a_berth(Boat boat){

@@ -109,7 +109,7 @@ void Init()
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
 //    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
 //    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map-3.11
-    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map-3.11
+    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map-3.12
 //    vector<int> berth_id = {0,0,3,3,3,4,8,8,9,9}; // map-3.9
 //    vector<int> berth_id = {2,2,3,3,4,4,6,6,7,7}; // map-3.10
 
@@ -123,7 +123,6 @@ void Init()
         }
         base_DS::safe[i] = true;
         base_DS::restoring[i] = false;
-
     }
 
     if (inti_length_to_berth==0 || inti_length_to_berth==INT_MAX){
@@ -269,18 +268,22 @@ int main()
                 file << "current_money " << base_DS::money << endl;
                 file.close();
 
-                if (base_DS::id == 14500 || base_DS::id == 15000){
-                    int sum = 0;
+                if (base_DS::id == 15000){
+                    std::ofstream file("value_leaf.txt", std::ios::out | std::ios::app);
+
                     for(int i = 0; i < base_DS::berth_num; i++){
+                        int sum = 0;
                         auto copy = base_DS::berth[i].queue_goods_value;
+                        file << "berth_id: " << i << endl;
+                        file << "loading_speed: " << base_DS::berth[i].loading_speed << endl;
+                        file << "transport time: " << base_DS::berth[i].transport_time << endl;
+                        file << "num_left: " << copy.size() << endl;
                         while(!copy.empty()){
                             sum += copy.front();
                             copy.pop();
                         }
+                        file << "money_left: " << sum << endl;
                     }
-                    std::ofstream file("value_leaf.txt", std::ios::out | std::ios::app);
-                    file << "id " << base_DS::id << endl;
-                    file << "value_leaf " << sum << endl;
                     file.close();
                 }
             }
