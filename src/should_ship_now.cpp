@@ -38,6 +38,9 @@ bool should_ship_now(Boat& boat){
         if (num_goods_plan_berth > capacity-boat.load+(move_between_berths+delta2image_point)/mean_frames_per_goods){
             return true;
         }
+        if(base_DS::berth[boat.id_dest_on_the_way].queue_goods_value.size() == 0){//当前港口已无货物可装载并且装有货物
+            return true;
+        }
 //        if (base_DS::id >= 13000 && !boat.final_change){
 //            boat.final_change = true;
 //            return true;
