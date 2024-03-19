@@ -137,6 +137,8 @@ void Dispatch::modify_safe() {
         }
         if (base_DS::robot[i].path.front().get_symbol() == wall){
             base_DS::safe[i]=false;
+            Position current_dest = base_DS::robot[i].current_dest;
+            base_DS::goods[current_dest.x][current_dest.y].lock = -1; // 去锁
         }
         // 这版考虑更通用的避障策略 但是显著增加寻路次数
 //        // 这必须放在最后，不然开局走不动 还没想为啥是这样

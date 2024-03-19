@@ -129,7 +129,7 @@ pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Posi
     // 20: 193612
     // 30: 192068
     // 40: 191278
-    int max_value = 0; // 寻找货物时记录
+    int max_value = 88; // 寻找货物时记录
     Position max_value_posi;
     int cur_level = 0;
     Position mark = q.front();
@@ -145,11 +145,17 @@ pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Posi
                 return {res.size() - 1, res}; // 返回路径长度和路径
             }else{
                 int cur_value = base_DS::goods[current.x][current.y].value;
-                if (cur_value > max_value){
-                    max_value = cur_value;
+//                if (cur_value > max_value){
+//                    max_value = cur_value;
+//                    max_value_posi = current;
+//                }
+//                if (cur_level>=max_level){
+//                    auto res = reconstructPath(&cells[max_value_posi.x][max_value_posi.y]);
+//                    end = max_value_posi;
+//                    return {res.size() - 1, res}; // 返回路径长度和路径
+//                }
+                if (cur_value >= max_value){
                     max_value_posi = current;
-                }
-                if (cur_level>=max_level){
                     auto res = reconstructPath(&cells[max_value_posi.x][max_value_posi.y]);
                     end = max_value_posi;
                     return {res.size() - 1, res}; // 返回路径长度和路径
