@@ -131,8 +131,14 @@ vector<int> get_init_berth_id(vector<Berth> berth, vector<Robot> robot){
     int space = 0;
     int robot_cnt = 0;
     // 分配方法
+    ShortestPathGetter getter;
     for (int i=0; i<berth_range_index.size();){
         if(robot_cnt == robot.size())break;
+        int connect_flag = getter.shortestPath(robot[robot_cnt].posi,berth[berth_range_index[i]].leftupper,0).first;    //机器人与港口
+        if(connect_flag == -1){
+            assign[robot_cnt++] = 0;
+            continue;
+        }
         if(space >= 1 && (space>berth_range[berth_range_index[i]] || space>=max_robot_per_berth)){
             i++;
             space = 0;

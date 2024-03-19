@@ -35,6 +35,7 @@ namespace base_DS{
     extern std::vector<Boat> boat;
     extern std::vector<char> symbol_maintained;
     extern std::vector<Position> posi_symbol;
+    extern std::vector<int>berth_assign;
 
     //连通性数组
     extern int connection[N][N];

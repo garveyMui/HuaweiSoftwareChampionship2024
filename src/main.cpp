@@ -5,6 +5,7 @@
 #include "update_status.h"
 #include "get_shortest_path.h"
 #include "get_init_berth_id.h"
+#include "get_revolved_berth_id.h"
 
 #include "dispatch.h"
 #include "figure_out.h"
@@ -37,6 +38,7 @@ namespace base_DS {
     std::vector<Boat> boat(boat_num);
     std::vector<char> symbol_maintained;
     std::vector<Position> posi_symbol;
+    std::vector<int>berth_assign;
 
     int connection[N][N];
     }
@@ -106,11 +108,12 @@ void Init()
 
     //初始化机器人负责的港口，暂时定一人一个
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
-    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
+//    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
 //    vector<int> berth_id = {0,0,3,3,3,4,8,8,9,9}; // map-3.9
 //    vector<int> berth_id = {2,2,3,3,4,4,6,6,7,7}; // map-3.10
 
-//    vector<int> berth_id = get_init_berth_id(base_DS::berth, base_DS::robot);
+    vector<int> berth_id = get_init_berth_id(base_DS::berth, base_DS::robot);
+    base_DS::berth_assign.assign(berth_id.begin(), berth_id.end());
 
     for(int i = 0; i < base_DS::robot_num; i ++) {
 //        assign_berth(base_DS::robot[i]);
@@ -243,9 +246,11 @@ void allocate_memory(){
 //        base_DS::gds[i] = (int*)malloc(base_DS::N * sizeof(int));
 //    }
 }
+
 int main()
 {
     allocate_memory();
+        get_revolved_berth_id r_b = get_revolved_berth_id();
 
         Procedure p = Procedure();
         Dispatch d(base_DS::robot_num);
@@ -254,6 +259,10 @@ int main()
         for(int frame = 1; frame <= 15000; frame++)
         {
             int id = Input();
+            // 重新分配港口
+            if(frame % r_b.revolve_berth_frame == 0)
+                r_b.revolved_berth(base_DS::berth, base_DS::robot);
+
             d.do_dispatch();
             f.do_figure_out();
             p.do_procedure();
