@@ -29,6 +29,7 @@ public:
 
     int f, g, h; //for a*
     APosition* parent; //for a*
+    int level = 0;
 
     APosition(int row, int col, int g, int h);
     APosition();

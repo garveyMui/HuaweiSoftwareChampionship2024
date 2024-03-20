@@ -1,18 +1,20 @@
 //
 // Created by Administrator on 2024/3/7.
 //
+
+
+using namespace std;
+
+#ifndef LOVEAPPLE_BERTH_H
+#define LOVEAPPLE_BERTH_H
 #include <queue>
 #include "Goods.h"
 #include "Boat.h"
 #include "Area.h"
 #include <vector>
 #include <unordered_map>
-
-using namespace std;
-
-#ifndef LOVEAPPLE_BERTH_H
-#define LOVEAPPLE_BERTH_H
-
+#include <Position.h>
+using Path = std::queue<Position>;
 class Berth
 {
 public:
@@ -43,14 +45,20 @@ public:
 
     static bool in_certain_berth(Position posi);
 
-    /*以下0318新加，未实现*/
+
     vector<vector<APosition>> cells; // 用于存储从港口到其它可达点的路径，可参考get_shortest_path
+    vector<vector<bool>> connection;
     int R = 20; // 港口一定半径
     unordered_map<Position, int, PositionHash> territories;  // 一定半径内所有可达点的坐标与对应货品价值，不考虑相交问题
                                                 // 相交问题需要全部港口信息，因此不能作为成员变量，
                                                 // 相交问题都交给get_init_berth_id, get_revolved_berth_id解决
+    /*以下0318新加，未实现*/
     int value_ceil; // 对应货品价值超过一定上限之后自愿分给临近港口
     /*以上0318新加，未实现*/
+    void _init_cells();
+    Path berth2point(Position point);
+    Path point2berth(Position point);
+
 };// Berth
 
 

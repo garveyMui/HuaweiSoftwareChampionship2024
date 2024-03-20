@@ -59,14 +59,20 @@ void update_robot_status (int goods, int x, int y, int sts, Robot& robot) {
                 base_DS::goods[robot.last_posi.x][robot.last_posi.y].reset();
                 base_DS::posi_goods.erase(robot.last_posi);
                 robot.on_the_way2goods = false;
-                auto res = getter.shortestPath(robot.posi, robot.destinations.front().area.center,-1); // 0:berth
+//                auto res = getter.shortestPath(robot.posi, robot.destinations.front().area.center,-1); // 0:berth
+//                robot.current_dest = robot.destinations.front().area.center;
+//                robot.path = res.second;
+//                robot.on_the_way2berth = true; // 系统判定拿到了才置1，这时候不更新远目标，只更新近目标
                 robot.current_dest = robot.destinations.front().area.center;
-                robot.path = res.second;
-                robot.on_the_way2berth = true; // 系统判定拿到了才置1，这时候不更新远目标，只更新近目标
+                robot.path = robot.destinations.front().point2berth(robot.posi);
+                robot.on_the_way2berth = true;
             }else if(robot.path.empty()){ // 被四面围起来撞晕了
-                auto res = getter.shortestPath(robot.posi, robot.destinations.front().area.center,-1); // 0:berth
+//                auto res = getter.shortestPath(robot.posi, robot.destinations.front().area.center,-1); // 0:berth
+//                robot.current_dest = robot.destinations.front().area.center;
+//                robot.path = res.second;
                 robot.current_dest = robot.destinations.front().area.center;
-                robot.path = res.second;
+                robot.path = robot.destinations.front().point2berth(robot.posi);
+                robot.on_the_way2berth = true;
             }
         }
     }

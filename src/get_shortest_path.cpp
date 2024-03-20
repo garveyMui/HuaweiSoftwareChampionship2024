@@ -28,6 +28,44 @@ struct CompareAPosition {
     }
 };
 
+void ShortestPathGetter::set_cells_berth(Position posi_berth, vector<vector<APosition>>& cells,
+                                         vector<vector<bool>>& connection, unordered_map<Position, int, PositionHash> territories){
+    int rows = 200;
+    int cols = 200;
+
+    // 初始化 visited 数组
+    for (int i = 0; i < rows; i++){
+        for (int j = 0; j < cols; j++){
+            visited[i][j] = false;
+        }
+    }
+
+    queue<Position> q;
+
+    q.push(posi_berth);
+    connection[posi_berth.x][posi_berth.y] = true;
+    visited[posi_berth.x][posi_berth.y] = true;
+    cells[posi_berth.x][posi_berth.y].level = 0;
+    territories.insert({posi_berth,0});
+
+    while (!q.empty()) {
+        Position current = q.front();
+        q.pop();
+        // 尝试四个方向移动
+        for (auto direction: this->directions) {
+            Position attempt = Position(current, direction);
+            if (isValidMove(visited, attempt)) {
+                q.push(attempt);
+                connection[attempt.x][attempt.y] = true;
+                visited[attempt.x][attempt.y] = true;
+                cells[attempt.x][attempt.y].parent = &cells[current.x][current.y];
+                cells[attempt.x][attempt.y].level = cells[current.x][current.y].level+1;
+                territories.insert({attempt,0});
+            }
+        }
+    }
+}
+
 void ShortestPathGetter::set_connected_set(Position posi_robot, int tag){
     int rows = 200;
     int cols = 200;
@@ -254,6 +292,25 @@ std::queue<Position> ShortestPathGetter::reconstructPath(APosition* current) {
     }
     return res;
 }
+
+std::queue<Position> ShortestPathGetter::reconstructPath(APosition* current, bool reverse) {
+    std::vector<Position> path;
+    while (current) {
+        path.push_back(*current);
+        current = current->parent;
+    }
+    if (reverse){
+        std::reverse(path.begin(), path.end());
+    }
+    // 可以改成栈 但是其他调用代码要重写 暂时不动
+    std::queue<Position> res;
+    // 不要记录起点
+    for (int i = 1; i < path.size(); i++){
+        res.push(path[i]);
+    }
+    return res;
+}
+
 //第三个参数暂时还没用上 后面可能会用
 pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Position &end, int goods_value = 0, int level=200) {
 

@@ -1,6 +1,10 @@
 //
 // Created by Administrator on 2024/3/7.
 //
+
+
+#ifndef LOVEAPPLE_ROBOT_H
+#define LOVEAPPLE_ROBOT_H
 #include "Area.h"
 #include "Berth.h"
 #include <vector>
@@ -8,9 +12,6 @@
 #include <map>
 #include <unordered_set>
 //#include <bits/stdc++.h>
-
-#ifndef LOVEAPPLE_ROBOT_H
-#define LOVEAPPLE_ROBOT_H
 /**
  * 机器人数据结构
  */
