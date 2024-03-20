@@ -109,7 +109,7 @@ void Init()
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
 //    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
 //    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map-3.11
-    vector<int> berth_id = {0,1,4,3,4,5,6,8,8,9}; // map-3.12
+    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map-3.12
 //    vector<int> berth_id = {0,0,3,3,3,4,8,8,9,9}; // map-3.9
 //    vector<int> berth_id = {2,2,3,3,4,4,6,6,7,7}; // map-3.10
 
@@ -184,7 +184,6 @@ int Input()
         for (int j = 0; j < base_DS::berth_num; j++){
             base_DS::berth[j].set_goods(Position(x, y), val);
         }
-
 
         /*更新机器人视野内货物*/
         for (auto& robot : base_DS::robot) {
@@ -279,7 +278,20 @@ int main()
                 file << "id " << base_DS::id << endl;
                 file << "current_money " << base_DS::money << endl;
                 file.close();
-
+                file = std::ofstream ("goods_on_berth.txt", std::ios::out | std::ios::app);
+                file << "id " << base_DS::id << endl;
+                for(int i = 0; i < base_DS::berth_num; i++){
+                    int sum = 0;
+                    auto copy = base_DS::berth[i].queue_goods_value;
+                    file << "berth_id: " << i << " ";
+                    file << "num_left: " << copy.size() << " ";
+                    while(!copy.empty()){
+                        sum += copy.front();
+                        copy.pop();
+                    }
+                    file << "money_left: " << sum << endl;
+                }
+                file.close();
                 if (base_DS::id == 15000){
                     std::ofstream file("value_leaf.txt", std::ios::out | std::ios::app);
 

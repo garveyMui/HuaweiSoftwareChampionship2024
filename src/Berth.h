@@ -13,7 +13,6 @@ using namespace std;
 #include "Area.h"
 #include <vector>
 #include <unordered_map>
-#include <Position.h>
 
 using Path = std::queue<Position>;
 class Berth

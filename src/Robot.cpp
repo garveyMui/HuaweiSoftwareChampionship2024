@@ -198,7 +198,8 @@ bool Robot::decide_to_load() {
 
     int x = this->posi.x;
     int y = this->posi.y;
-    return base_DS::goods[x][y].value > 0 && this->goods == 0 && this->status == 1 && this->posi == this->current_dest;
+    return base_DS::goods[x][y].value > 0 && this->goods == 0 && this->status == 1;
+//    return base_DS::goods[x][y].value > 0 && this->goods == 0 && this->status == 1 && this->posi == this->current_dest;
 }
 
 bool Robot::decide_to_unload() {
