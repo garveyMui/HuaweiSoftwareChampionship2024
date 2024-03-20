@@ -54,8 +54,8 @@ Position choose_a_goods(Robot &robot) {
     }
 
     // 去港口或者在港口附近逗留
-    if (100 < (robot.posi-robot.destinations.front().leftupper)){
-        return robot.destinations.front().leftupper;
+    if (100 < (robot.posi-robot.destinations.front()->leftupper)){
+        return robot.destinations.front()->leftupper;
     }else{ // 不加随机
 //        vector<Direction> ds = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 //        for (Direction d : ds){

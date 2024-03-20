@@ -12,7 +12,7 @@
 */
 // 暂时只设置为初始化时选择的那个港口
 int choose_a_berth(Robot& robot){
-    return robot.destinations.front().id;
+    return robot.destinations.front()->id;
 }
 //    std::vector<Berth>& berth = base_DS::berth;
 //    //载货状态下的机器人优先选择一个靠近自己的港口进行运输，只考虑最短路径即可

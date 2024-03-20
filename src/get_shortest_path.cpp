@@ -29,7 +29,7 @@ struct CompareAPosition {
 };
 
 void ShortestPathGetter::set_cells_berth(Position posi_berth, vector<vector<APosition>>& cells,
-                                         vector<vector<bool>>& connection, unordered_map<Position, int, PositionHash> territories){
+                                         vector<vector<bool>>& connection, unordered_map<Position, int, PositionHash>& territories){
     int rows = 200;
     int cols = 200;
 
@@ -135,7 +135,14 @@ bool ShortestPathGetter::find_it(Position posi, int type, Position current_dest,
     }
     if (type == 1){
         const Goods& tmp = base_DS::goods[posi.x][posi.y];
-        bool found = tmp.value > 0 && (tmp.remain_frame > length+2) && (tmp.lock==-1);
+        bool lock = false;
+        for (int i = 0; i < base_DS::robot_num; i++){
+            if (base_DS::robot[i].current_dest==posi){
+                lock = true;
+                break;
+            }
+        }
+        bool found = tmp.value > 0 && (tmp.remain_frame > length+2) && (!lock);
         return found;
     }
     return false; //都没有的话上层可能死循环，可用于定位逻辑错误
@@ -170,7 +177,7 @@ pair<int, queue<Position>> ShortestPathGetter::shortestPath(Position start, Posi
     // 20: 193612
     // 30: 192068
     // 40: 191278
-    int max_value = 44; // 寻找货物时记录
+    int max_value = 0; // 寻找货物时记录
 //    int max_value = 0; // 寻找货物时记录
     double value_per_level = -1;
     Position max_value_posi;
@@ -296,7 +303,7 @@ std::queue<Position> ShortestPathGetter::reconstructPath(APosition* current) {
     return res;
 }
 
-std::queue<Position> ShortestPathGetter::reconstructPath(APosition* current, bool reverse) {
+void ShortestPathGetter::reconstructPath(APosition* current, bool reverse, queue<Position>& res) {
     std::vector<Position> path;
     while (current) {
         path.push_back(*current);
@@ -306,12 +313,14 @@ std::queue<Position> ShortestPathGetter::reconstructPath(APosition* current, boo
         std::reverse(path.begin(), path.end());
     }
     // 可以改成栈 但是其他调用代码要重写 暂时不动
-    std::queue<Position> res;
+    while(!res.empty()){
+        res.pop();
+    }
     // 不要记录起点
     for (int i = 1; i < path.size(); i++){
         res.push(path[i]);
     }
-    return res;
+
 }
 
 //第三个参数暂时还没用上 后面可能会用

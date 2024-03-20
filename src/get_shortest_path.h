@@ -18,7 +18,7 @@ using Path = std::queue<Position>;
 class ShortestPathGetter{
 public:
     static std::queue<Position> reconstructPath(APosition* current);
-    static queue<Position> reconstructPath(APosition *current, bool reverse);
+    static void reconstructPath(APosition *current, bool reverse, queue<Position>& res);
     static bool visited[200][200];
     static vector<vector<APosition>> cells;
 
@@ -42,7 +42,7 @@ public:
     void set_connected_set(Position posi_robot, int tag);
     void get_connected_unsafe_cars(Robot robot, vector<int>& added_cars);
 
-    void set_cells_berth(Position posi_berth, vector<vector<APosition>> &cells, vector<vector<bool>> &connection, unordered_map<Position, int, PositionHash> territories);
+    void set_cells_berth(Position posi_berth, vector<vector<APosition>> &cells, vector<vector<bool>> &connection, unordered_map<Position, int, PositionHash>& territories);
 
 
 };

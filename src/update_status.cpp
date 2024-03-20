@@ -11,6 +11,7 @@
 #include "get_shortest_path.h"
 
 #include "utils_debug.h"
+#include <fstream>
 
 /*
  * 这个函数负责更新机器人物理状态、远距离目标、近距离目标、到近距离目标的路径
@@ -25,53 +26,64 @@ void update_robot_status (int goods, int x, int y, int sts, Robot& robot) {
     // 如果没有刚撞车则正常处理，否则交给上层处理
     if (!(robot.last_status==1 && robot.status==0)){
         // 超参数，货稀疏的时候先去港口要紧
-        if (base_DS::id < base_DS::inti_length_to_berth){
+//        if (base_DS::id < base_DS::inti_length_to_berth){
+//            return;
+//        }
+        if (base_DS::id < 20){
             return;
         }
         auto getter = ShortestPathGetter();
         // 初始化的远目标都是负责的港口、如果机器人出生在港口则无法处理
         // 没载货就用choose_a_goods
+
         if (robot.goods == 0) {
+            auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
+            std::ofstream file("time.txt", std::ios::out | std::ios::app);
+            file << "id " << base_DS::id << endl;
             if (base_DS::goods[robot.current_dest.x][robot.current_dest.y].value <= 0){
-                auto res = getter.shortestPath(robot.posi, robot.sub_dest, 1); // 1:goods
-                robot.current_dest = robot.sub_dest;
-                // 暂时谁先找到是谁的
-                robot.path = res.second;
-//                if (robot.path.size() > 0){
-//                    base_DS::goods[robot.current_dest.x][robot.current_dest.y].lock = robot.robot_id;
-//                }
-                robot.on_the_way2goods = true;
-            }else if(robot.path.empty()){
-                auto res = getter.shortestPath(robot.posi, robot.sub_dest, 1); // -1:exactly
-                robot.current_dest = robot.sub_dest;
-                // 暂时谁先找到是谁的
-                base_DS::goods[robot.current_dest.x][robot.current_dest.y].lock = robot.robot_id;
-                robot.path = res.second;
-//                if (robot.path.size() > 0){
-//                    base_DS::goods[robot.current_dest.x][robot.current_dest.y].lock = robot.robot_id;
-//                }
-                robot.on_the_way2goods = true;
+                if (robot.posi == robot.destinations.front()->area.center){
+                    robot.current_dest = robot.destinations.front()->get_goods_posi();
+                    if (robot.current_dest != Position(-1,-1)){
+                        robot.path = robot.destinations.front()->berth2point(robot.current_dest);
+                    }else{
+                        robot.path = {};
+                    }
+                }else{
+                    auto res = getter.shortestPath(robot.posi, robot.sub_dest, 1); // 1:goods
+                    robot.current_dest = robot.sub_dest;
+                    robot.path = res.second;
+                    robot.on_the_way2goods = true;
+                }
             }
+            // 调用函数
+            auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
+//             计算执行时间
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+            file << "函数执行时间： " << duration.count()/1000.0 << " ms" << std::endl;
+            file.close();
         }else{
             if (robot.last_goods==0){
                 // 如果规划路径时发生原地捡现在会出问题
                 robot.goods_value = base_DS::goods[robot.last_posi.x][robot.last_posi.y].value;
                 base_DS::goods[robot.last_posi.x][robot.last_posi.y].reset();
                 base_DS::posi_goods.erase(robot.last_posi);
+                for (int i = 0; i < base_DS::berth_num; i++){
+                    base_DS::berth[i].reset_goods(robot.last_posi);
+                }
                 robot.on_the_way2goods = false;
 //                auto res = getter.shortestPath(robot.posi, robot.destinations.front().area.center,-1); // 0:berth
 //                robot.current_dest = robot.destinations.front().area.center;
 //                robot.path = res.second;
 //                robot.on_the_way2berth = true; // 系统判定拿到了才置1，这时候不更新远目标，只更新近目标
-                robot.current_dest = robot.destinations.front().area.center;
-                robot.path = robot.destinations.front().point2berth(robot.posi);
+                robot.current_dest = robot.destinations.front()->area.center;
+                robot.destinations.front()->point2berth(robot.posi, robot.path);
                 robot.on_the_way2berth = true;
             }else if(robot.path.empty()){ // 被四面围起来撞晕了
 //                auto res = getter.shortestPath(robot.posi, robot.destinations.front().area.center,-1); // 0:berth
 //                robot.current_dest = robot.destinations.front().area.center;
 //                robot.path = res.second;
-                robot.current_dest = robot.destinations.front().area.center;
-                robot.path = robot.destinations.front().point2berth(robot.posi);
+                robot.current_dest = robot.destinations.front()->area.center;
+                robot.destinations.front()->point2berth(robot.posi, robot.path);
                 robot.on_the_way2berth = true;
             }
         }

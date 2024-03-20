@@ -30,7 +30,7 @@ void assign_berth(Robot & robot){
     std::sort(berth_choices.begin(), berth_choices.end(), compareBerth);
     for (int i = 0; i < berth_choices.size(); i++){
         if (berth_choices[i].num_assigned_robots<2){
-            robot.destinations.push_back(berths[berth_choices[i].id]);
+            robot.destinations.push_back(&berths[berth_choices[i].id]);
             berths[berth_choices[i].id].num_assigned_robots++;
             break;
         }

@@ -25,7 +25,7 @@ public:
 
     Robot(int startX, int startY, int robot_id);
 
-    Robot(int startX, int startY, std::vector<Berth> destinations);
+//    Robot(int startX, int startY, std::vector<Berth> destinations);
     int surrounded;
     int robot_id;
     Position posi;
@@ -50,7 +50,7 @@ public:
     int diameter_area = 20;
     double priority;    // 错车优先级
     Area area;          // 所属区域，用来确定关心的货物
-    std::vector<Berth> destinations;  // 负责的目的地港口
+    std::vector<Berth*> destinations;  // 负责的目的地港口
     int penalty;         // 碰撞剩余罚时，单位为帧 默认所有时间单位都为帧
     int frame_stop;      // 碰撞导致的此次停车帧数计数
     int view = 30;         // 视野半径，只计算这以内的货物距离与路径
@@ -63,7 +63,7 @@ public:
     void update(int goods, int x, int y, int status);
     void _set_area(int startX, int startY);
     void _set_destinations();
-    void _set_destinations(std::vector<Berth> berth);
+    void _set_destinations(std::vector<Berth*> berth);
     void _set_init_path();
     bool will_hit();  // 计划前往的位置是否会与其它机器人相撞
     Position reset();     // 用于为在港口装卸完的机器人从Area中选一个闲逛目标

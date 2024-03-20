@@ -14,6 +14,7 @@ using namespace std;
 #include <vector>
 #include <unordered_map>
 #include <Position.h>
+
 using Path = std::queue<Position>;
 class Berth
 {
@@ -57,8 +58,11 @@ public:
     /*以上0318新加，未实现*/
     void _init_cells();
     Path berth2point(Position point);
-    Path point2berth(Position point);
-
+    void point2berth(Position point, Path & path);
+    Position get_goods_posi();
+    void set_goods(Position posi, int value);
+    void set_territories(Area area);
+    void reset_goods(Position posi);
 };// Berth
 
 

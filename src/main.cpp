@@ -109,7 +109,7 @@ void Init()
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
 //    vector<int> berth_id = {0,0,1,1,6,6,8,8,9,9}; // map1
 //    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map-3.11
-    vector<int> berth_id = {0,1,2,3,4,5,6,7,8,9}; // map-3.12
+    vector<int> berth_id = {0,1,4,3,4,5,6,8,8,9}; // map-3.12
 //    vector<int> berth_id = {0,0,3,3,3,4,8,8,9,9}; // map-3.9
 //    vector<int> berth_id = {2,2,3,3,4,4,6,6,7,7}; // map-3.10
 
@@ -117,7 +117,7 @@ void Init()
 
     for(int i = 0; i < base_DS::robot_num; i ++) {
 //        assign_berth(base_DS::robot[i]);
-        base_DS::robot[i]._set_destinations({base_DS::berth[berth_id[i]]});
+        base_DS::robot[i]._set_destinations({&base_DS::berth[berth_id[i]]});
         if (!base_DS::robot[i].dead && base_DS::robot[i].path.size() < inti_length_to_berth){
             inti_length_to_berth = base_DS::robot[i].path.size();
         }
@@ -153,12 +153,15 @@ int Input()
 
     //对之前货物剩余时间-1
     std::unordered_set<Position, PositionHash> pending2delete;
-    for (auto posi : base_DS::posi_goods){
+    for (auto& posi : base_DS::posi_goods){
         if (0 < base_DS::goods[posi.x][posi.y].remain_frame){
             bool vanish = base_DS::goods[posi.x][posi.y].decrease_remain();
             if (vanish){
                 base_DS::goods[posi.x][posi.y].reset(); // 清除货品保存的所有状态
                 pending2delete.insert(posi);
+                for (int i = 0; i < base_DS::berth_num; i++){
+                    base_DS::berth[i].reset_goods(posi);
+                }
             }
         }
     }
@@ -178,6 +181,10 @@ int Input()
 
         base_DS::goods[x][y].set_value(val, Position(x, y));
         base_DS::posi_goods.insert(Position(x, y));
+        for (int j = 0; j < base_DS::berth_num; j++){
+            base_DS::berth[j].set_goods(Position(x, y), val);
+        }
+
 
         /*更新机器人视野内货物*/
         for (auto& robot : base_DS::robot) {
@@ -193,6 +200,7 @@ int Input()
 
     //输入机器人信息
     //他给的机器人的顺序和我在地图上扫描出来的可能不一致 需要解决
+
     for(int i = 0; i < base_DS::robot_num; i++)
     {
         int sts,goods,x,y;
@@ -209,19 +217,9 @@ int Input()
                 }
             }
         }
-//        auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
-        update_robot_status(goods, x, y, sts, base_DS::robot[i]);                             // 调用函数
-//        auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
-        // 计算执行时间
-//        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-        // 输出执行时间
-//        std::cout << "函数执行时间： " << duration.count()/1000.0 << " 毫秒" << std::endl;
-
-
-        //撞车路径重调度
-
-        //
+        update_robot_status(goods, x, y, sts, base_DS::robot[i]);
     }
+
     //更新港口状态
     update_berth_status();
     //输入船信息
@@ -267,15 +265,10 @@ int main()
 
         for(int frame = 1; frame <= 15000; frame++)
         {
-            int id = Input();
-//            auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
-            d.do_dispatch();
-                                    // 调用函数
-//            auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
-//             计算执行时间
-//            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-//            std::cout << "函数执行时间： " << duration.count()/1000.0 << " ms" << std::endl;
 
+            int id = Input();
+
+            d.do_dispatch();
             f.do_figure_out();
             p.do_procedure();
             d.restore(); //当前帧即恢复

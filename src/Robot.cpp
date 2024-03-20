@@ -24,17 +24,17 @@ Robot::Robot(int startX, int startY, int robot_id=0) {
     this->penalty = 0; //-1: 表示不要移动
     this->surrounded = 0;
 }
-Robot::Robot(int startX, int startY, std::vector<Berth> destinations) {
-    this->posi = Position(startX, startY);
-    this->birth = Position(startX, startY);
-    this->_set_area(startX, startY);
-    this->goods = 0;  //0：未携带 1：携带
-    this->status = 1; //0： 罚时恢复中 1：正常
-    this->priority = 0;
-    this->penalty = 0; //-1: 表示不要移动
-//    this->_set_destinations(destinations);
-//    this->current_dest = destinations[0].leftupper;
-}
+//Robot::Robot(int startX, int startY, std::vector<Berth> destinations) {
+//    this->posi = Position(startX, startY);
+//    this->birth = Position(startX, startY);
+//    this->_set_area(startX, startY);
+//    this->goods = 0;  //0：未携带 1：携带
+//    this->status = 1; //0： 罚时恢复中 1：正常
+//    this->priority = 0;
+//    this->penalty = 0; //-1: 表示不要移动
+////    this->_set_destinations(destinations);
+////    this->current_dest = destinations[0].leftupper;
+//}
 Robot::Robot() {
 
 }
@@ -113,7 +113,7 @@ void Robot::_set_destinations() {
 //        }
         for (int i = 0; i < base_DS::berth.size(); i++){
             if (base_DS::berth[i].area.contains(dest)){
-                this->destinations = {base_DS::berth[i]};
+                this->destinations = {&base_DS::berth[i]};
                 break;
             }
         }
@@ -125,10 +125,10 @@ void Robot::_set_destinations() {
     }
 }
 
-void Robot::_set_destinations(std::vector<Berth> berths) {
+void Robot::_set_destinations(std::vector<Berth*> berths) {
     this->destinations = berths;
     auto getter = ShortestPathGetter();
-    Position dest = berths.front().area.center;
+    Position dest = berths.front()->area.center;
 //    auto res = getter.shortestPath(this->posi, dest, -1);
 //    if (res.first>0){
 //        this->path = res.second;
@@ -138,12 +138,12 @@ void Robot::_set_destinations(std::vector<Berth> berths) {
 //        this->dead = true;
 //    }
     // 暂时没考虑不连通问题
-    this->path = berths.front().point2berth(this->posi);
+    berths.front()->point2berth(this->posi, this->path);
 }
 
 void Robot::_set_init_path() {
     auto getter = ShortestPathGetter();
-    Position dest = this->destinations.front().leftupper;
+    Position dest = this->destinations.front()->leftupper;
     auto res = getter.shortestPath(this->posi, dest, -1);
     if (res.first > 0){
         this->path = res.second;
