@@ -20,7 +20,6 @@ void update_robot_status (int goods, int x, int y, int sts, Robot& robot) {
     if (robot.dead) {
         return;
     }
-
     robot.update(goods, x, y, sts);//从环境的状态重新赋值给机器人
     // 假设路径搜索没有问题，那么碰撞都是机器人之间交互导致的
     // 如果没有刚撞车则正常处理，否则交给上层处理
@@ -37,10 +36,21 @@ void update_robot_status (int goods, int x, int y, int sts, Robot& robot) {
                 auto res = getter.shortestPath(robot.posi, robot.sub_dest, 1); // 1:goods
                 robot.current_dest = robot.sub_dest;
                 // 暂时谁先找到是谁的
+                robot.path = res.second;
+//                if (robot.path.size() > 0){
+//                    base_DS::goods[robot.current_dest.x][robot.current_dest.y].lock = robot.robot_id;
+//                }
+                robot.on_the_way2goods = true;
+            }else if(robot.path.empty()){
+                auto res = getter.shortestPath(robot.posi, robot.sub_dest, 1); // -1:exactly
+                robot.current_dest = robot.sub_dest;
+                // 暂时谁先找到是谁的
                 base_DS::goods[robot.current_dest.x][robot.current_dest.y].lock = robot.robot_id;
                 robot.path = res.second;
+//                if (robot.path.size() > 0){
+//                    base_DS::goods[robot.current_dest.x][robot.current_dest.y].lock = robot.robot_id;
+//                }
                 robot.on_the_way2goods = true;
-
             }
         }else{
             if (robot.last_goods==0){
@@ -94,7 +104,7 @@ void update_boat_status (int sts, int pos, Boat& boat, int boat_id){
 //            boat.load = 0;
 //        }    //船到虚拟点,清空载货
 //
-//       if (base_DS::id > 1){
+//       if (base_DS::id > 300){
 //           boat.id_dest_in_plan = choose_a_berth(boat);
 //       }
 //    }
