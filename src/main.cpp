@@ -91,19 +91,19 @@ void Init()
         }
     }
 
-    /*初始化整个地图连通性*/
-    for (int i = 0; i < base_DS::N; ++i)
-        for (int j = 0; j < base_DS::N; ++j)
-            base_DS::connection[i][j] = -1;  //初始化为-1
-    //根据每个机器人开始bfs，来初始化地图连通性
-    for(int i = 0; i < base_DS::robot_num; i ++) {
-        int robot_x = base_DS::robot[i].posi.x;
-        int robot_y = base_DS::robot[i].posi.y;
-        if (base_DS::connection[robot_x][robot_y] == -1) {    //只有未被标记的需要标记连通性
-            ShortestPathGetter getter;
-            getter.set_connected_set(base_DS::robot[i].posi, i);   //正好以机器人号作为联通标记
-        }
-    }
+//    /*初始化整个地图连通性*/
+//    for (int i = 0; i < base_DS::N; ++i)
+//        for (int j = 0; j < base_DS::N; ++j)
+//            base_DS::connection[i][j] = -1;  //初始化为-1
+//    //根据每个机器人开始bfs，来初始化地图连通性
+//    for(int i = 0; i < base_DS::robot_num; i ++) {
+//        int robot_x = base_DS::robot[i].posi.x;
+//        int robot_y = base_DS::robot[i].posi.y;
+//        if (base_DS::connection[robot_x][robot_y] == -1) {    //只有未被标记的需要标记连通性
+//            ShortestPathGetter getter;
+//            getter.set_connected_set(base_DS::robot[i].posi, i);   //正好以机器人号作为联通标记
+//        }
+//    }
 
     //初始化机器人负责的港口，暂时定一人一个
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
@@ -199,7 +199,6 @@ int Input()
         scanf("%d%d%d%d", &goods,
               &x, &y, &sts);
         if (base_DS::id == 1){
-
             // 暂时没考虑要不要深拷贝
             std::vector<Robot> robot_copy = base_DS::robot;
             for (int j = 0; j < base_DS::robot_num; j++){
@@ -209,9 +208,15 @@ int Input()
                     break;
                 }
             }
-
         }
-        update_robot_status(goods, x, y, sts, base_DS::robot[i]);
+//        auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
+        update_robot_status(goods, x, y, sts, base_DS::robot[i]);                             // 调用函数
+//        auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
+        // 计算执行时间
+//        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        // 输出执行时间
+//        std::cout << "函数执行时间： " << duration.count()/1000.0 << " 毫秒" << std::endl;
+
 
         //撞车路径重调度
 
@@ -252,11 +257,25 @@ int main()
         Procedure p = Procedure();
         Dispatch d(base_DS::robot_num);
         Figure_out f = Figure_out();
-        Init();
+//        auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
+        Init();                                  // 调用函数
+//        auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
+        // 计算执行时间
+//        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        // 输出执行时间
+//        std::cout << "函数执行时间： " << duration.count() << " 微秒" << std::endl;
+
         for(int frame = 1; frame <= 15000; frame++)
         {
             int id = Input();
+//            auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
             d.do_dispatch();
+                                    // 调用函数
+//            auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
+//             计算执行时间
+//            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+//            std::cout << "函数执行时间： " << duration.count()/1000.0 << " ms" << std::endl;
+
             f.do_figure_out();
             p.do_procedure();
             d.restore(); //当前帧即恢复

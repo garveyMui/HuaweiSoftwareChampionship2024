@@ -18,24 +18,35 @@ void Procedure::do_procedure() {
         if (base_DS::robot[i].dead){
             continue;
         }
+//        auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
         // 移动前动作
         if (base_DS::robot[i].decide_to_load() ||
             base_DS::robot[i].decide_to_unload()){
+            // 调用函数
+
             if (base_DS::robot[i].decide_to_load()){
                 std::cout << get_GET_command(i);
             }else{
                 std::cout << get_PULL_command(i);
             }
         }
+//        auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
+//         计算执行时间
+//        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+//        std::cout << "1函数执行时间： " << duration.count()/1000.0 << " ms" << std::endl;
+
+
         // 移动动作
         if(base_DS::robot[i].status == 1){
             if (base_DS::safe[i]){
                 int move_id = base_DS::robot[i].get_move_id();
+
                 if (move_id == -1){
                     // 空路径异常
 //                    std::cout << get_MOVE_command(i, 0);
                 }else{
                     std::cout << get_MOVE_command(i, move_id);
+
                 }
             }
         }
@@ -50,16 +61,18 @@ void Procedure::do_procedure() {
         }
     }
 
-    for (int i = 0; i < base_DS::boat_num; i++){
+
+    for (int i = 0; i < base_DS::boat_num; i++) {
         // 决定是否前往虚拟点
-        if (should_go_now(base_DS::boat[i])){
+        if (should_go_now(base_DS::boat[i])) {
             std::cout << get_GO_command(i);
-        }else if (should_ship_now(base_DS::boat[i]) ){
+        } else if (should_ship_now(base_DS::boat[i])) {
             if (base_DS::boat[i].id_dest_in_plan != -1)
                 std::cout << get_SHIP_command(i, base_DS::boat[i].id_dest_in_plan);
-        }else{
+        } else {
             //在装货，或者在途中
         }
+    }
 
 //        if (should_go_now(base_DS::boat[i])){
 //            std::cout << get_GO_command(i);
@@ -70,5 +83,5 @@ void Procedure::do_procedure() {
 //                std::cout << get_SHIP_command(i, berth_id);
 //            }
 //        }
-    }
+
 }

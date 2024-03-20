@@ -9,7 +9,14 @@
 using namespace std;
 void Dispatch::do_dispatch() {
 //    restore();
+//    auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
     modify_map();
+    // 调用函数
+//    auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
+//             计算执行时间
+//    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+//    std::cout << "2函数执行时间： " << duration.count()/1000.0 << " ms" << std::endl;
+
     modify_safe();
 }
 
@@ -72,7 +79,7 @@ void Dispatch::restore() {
 
 void Dispatch::modify_map() {
     for (int i = 0; i < base_DS::robot_num; i++){
-        Robot robot_i = base_DS::robot[i];
+        Robot& robot_i = base_DS::robot[i];
 
         char& sym = base_DS::ch[robot_i.posi.x][robot_i.posi.y];
 //        if (((robot_i.status==0) || robot_i.path.empty()) && sym != wall){
@@ -90,12 +97,12 @@ void Dispatch::modify_map() {
         }
     }
     for (int i = 0; i < base_DS::robot_num - 1; i++){
-        Robot robot_i = base_DS::robot[i];
+        Robot& robot_i = base_DS::robot[i];
         if (robot_i.status==0 || robot_i.path.empty()){
             continue;
         }
         for (int j = i+1; j < base_DS::robot_num; j++) {
-            Robot robot_j = base_DS::robot[j];
+            Robot& robot_j = base_DS::robot[j];
             if (robot_j.status==0 || robot_j.path.empty()){
                 continue;
             }

@@ -37,6 +37,8 @@ void ShortestPathGetter::set_cells_berth(Position posi_berth, vector<vector<APos
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < cols; j++){
             visited[i][j] = false;
+            cells[i][j].x = i;
+            cells[i][j].y = j;
         }
     }
 
@@ -75,6 +77,7 @@ void ShortestPathGetter::set_connected_set(Position posi_robot, int tag){
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < cols; j++){
             visited[i][j] = false;
+
         }
     }
 

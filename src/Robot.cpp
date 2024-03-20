@@ -105,9 +105,15 @@ void Robot::_set_destinations() {
     Position dest;
     auto res = getter.shortestPath(this->posi, dest, 0);
     if (res.first > 0){
-        for (auto berth:base_DS::berth){
-            if (berth.area.contains(dest)){
-                this->destinations = {berth};
+//        for (auto berth:base_DS::berth){
+//            if (berth.area.contains(dest)){
+//                this->destinations = {berth};
+//                break;
+//            }
+//        }
+        for (int i = 0; i < base_DS::berth.size(); i++){
+            if (base_DS::berth[i].area.contains(dest)){
+                this->destinations = {base_DS::berth[i]};
                 break;
             }
         }
@@ -123,14 +129,16 @@ void Robot::_set_destinations(std::vector<Berth> berths) {
     this->destinations = berths;
     auto getter = ShortestPathGetter();
     Position dest = berths.front().area.center;
-    auto res = getter.shortestPath(this->posi, dest, -1);
-    if (res.first>0){
-        this->path = res.second;
-        this->current_dest = dest;
-    }else{
-        // 说明这个机器人哪个港口都去不了，设置他是死的 以后不更新他的状态
-        this->dead = true;
-    }
+//    auto res = getter.shortestPath(this->posi, dest, -1);
+//    if (res.first>0){
+//        this->path = res.second;
+//        this->current_dest = dest;
+//    }else{
+//        // 说明这个机器人哪个港口都去不了，设置他是死的 以后不更新他的状态
+//        this->dead = true;
+//    }
+    // 暂时没考虑不连通问题
+    this->path = berths.front().point2berth(this->posi);
 }
 
 void Robot::_set_init_path() {
@@ -196,12 +204,18 @@ bool Robot::decide_to_load() {
 bool Robot::decide_to_unload() {
 
     bool in_berth = false;
-    for (auto berth:base_DS::berth){
-        if (berth.area.contains(this->posi)){
+    for (int i = 0; i < base_DS::berth.size(); i++){
+        if (base_DS::berth[i].area.contains(this->posi)){
             in_berth = true;
             break;
         }
     }
+//    for (auto berth:base_DS::berth){
+//        if (berth.area.contains(this->posi)){
+//            in_berth = true;
+//            break;
+//        }
+//    }
     return in_berth && this->goods==1 && this->status==1;
 }
 

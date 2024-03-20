@@ -21,7 +21,14 @@ Berth::Berth(int x, int y, int transport_time, int loading_speed, int id_berth) 
     }
     this->cells = vector<vector<APosition>>(200, vector<APosition>(200));
     this->connection = vector<vector<bool>>(200, vector<bool>(200,false));
-    _init_cells();
+    auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
+    _init_cells();                             // 调用函数
+    auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
+    // 计算执行时间
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    // 输出执行时间
+//    std::cout << "1函数执行时间： " << duration.count() << " 微秒" << std::endl;
+
 
 } // Berth
 void Berth::_init_cells(){
