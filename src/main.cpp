@@ -12,6 +12,7 @@
 #include "assign_berth.h"
 #include <climits>
 #include <fstream>
+#include "scheduler_boat.h"
 /**
  * 初始化
  */
@@ -23,6 +24,7 @@
 std::map<Direction ,int>Robot::move_ids = std::map<Direction ,int>();
 vector<vector<APosition>> ShortestPathGetter::cells(200, vector<APosition>(200));
 bool ShortestPathGetter::visited[200][200];
+int scheduler_boat::boat_capacity = 85;
 
 namespace base_DS {
     int money = 0, boat_capacity = 0, id = 0;
@@ -38,7 +40,7 @@ namespace base_DS {
     std::vector<Boat> boat(boat_num);
     std::vector<char> symbol_maintained;
     std::vector<Position> posi_symbol;
-
+    scheduler_boat* scheduler;
     int connection[N][N];
     }
 
@@ -80,6 +82,13 @@ void Init()
               &transport_time, &loading_speed);
         base_DS::berth[id] = Berth(x, y, transport_time, loading_speed, id);
     }
+    vector<Berth*> copy;
+    for (int i = 0; i < base_DS::berth_num; i++){
+        copy.push_back(&base_DS::berth[i]);
+    }
+
+    base_DS::scheduler = new scheduler_boat(copy);
+    base_DS::scheduler->do_schedule();
 
     //初始化机器人
     int id_robot = 0;
@@ -90,20 +99,6 @@ void Init()
             }
         }
     }
-
-//    /*初始化整个地图连通性*/
-//    for (int i = 0; i < base_DS::N; ++i)
-//        for (int j = 0; j < base_DS::N; ++j)
-//            base_DS::connection[i][j] = -1;  //初始化为-1
-//    //根据每个机器人开始bfs，来初始化地图连通性
-//    for(int i = 0; i < base_DS::robot_num; i ++) {
-//        int robot_x = base_DS::robot[i].posi.x;
-//        int robot_y = base_DS::robot[i].posi.y;
-//        if (base_DS::connection[robot_x][robot_y] == -1) {    //只有未被标记的需要标记连通性
-//            ShortestPathGetter getter;
-//            getter.set_connected_set(base_DS::robot[i].posi, i);   //正好以机器人号作为联通标记
-//        }
-//    }
 
     //初始化机器人负责的港口，暂时定一人一个
     int & inti_length_to_berth = base_DS::inti_length_to_berth;
@@ -132,6 +127,7 @@ void Init()
 
     //输入船容量
     scanf("%d", &base_DS::boat_capacity);
+
     for (int i = 0; i < base_DS::boat_num; i++){
         base_DS::boat[i]=Boat(base_DS::boat_capacity, i);
     }
@@ -150,6 +146,7 @@ int Input()
 {
     //输入帧id，当前获取总价值
     scanf("%d%d", &base_DS::id, &base_DS::money);
+    base_DS::scheduler->update(base_DS::id);
 
     //对之前货物剩余时间-1
     std::unordered_set<Position, PositionHash> pending2delete;
@@ -250,17 +247,18 @@ void allocate_memory(){
 int main()
 {
     allocate_memory();
+    Procedure p = Procedure();
+    Dispatch d(base_DS::robot_num);
+    Figure_out f = Figure_out();
 
-        Procedure p = Procedure();
-        Dispatch d(base_DS::robot_num);
-        Figure_out f = Figure_out();
-//        auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
-        Init();                                  // 调用函数
-//        auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
-        // 计算执行时间
-//        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-        // 输出执行时间
-//        std::cout << "函数执行时间： " << duration.count() << " 微秒" << std::endl;
+        auto start = std::chrono::high_resolution_clock::now(); // 获取当前时间
+    Init();
+        auto end = std::chrono::high_resolution_clock::now();   // 获取当前时间
+
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+        std::cout << "函数执行时间： " << duration.count() << " 微秒" << std::endl;
+
 
         for(int frame = 1; frame <= 15000; frame++)
         {

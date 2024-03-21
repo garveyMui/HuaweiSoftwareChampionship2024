@@ -3,7 +3,6 @@
 //
 
 #include "Goods.h"
-#include "data_structure.h"
 /*
  * 第三个值有默认参数，调用时可以赋值
  */

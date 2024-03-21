@@ -14,6 +14,7 @@
 #include "Position.h"
 #include "Robot.h"
 #include <unordered_set>
+#include "scheduler_boat.h"
 // base_data_structure
 namespace base_DS{
     const int robot_num = 10;
@@ -35,7 +36,7 @@ namespace base_DS{
     extern std::vector<Boat> boat;
     extern std::vector<char> symbol_maintained;
     extern std::vector<Position> posi_symbol;
-
+    extern scheduler_boat* scheduler;
     //连通性数组
     extern int connection[N][N];
 }

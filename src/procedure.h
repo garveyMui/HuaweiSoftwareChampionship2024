@@ -4,7 +4,7 @@
 
 #ifndef APPLEFANS_PROCEDURE_H
 #define APPLEFANS_PROCEDURE_H
-
+#include "scheduler_boat.h"
 
 class Procedure {
 public:

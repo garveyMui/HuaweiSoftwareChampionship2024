@@ -6,8 +6,8 @@
 #include "update_status.h"
 #include "data_structure.h"
 #include "choose_a_goods.h"
-#include "choose_a_berth.h"
-#include "should_go_now.h"
+
+
 #include "get_shortest_path.h"
 #include <chrono>
 #include "utils_debug.h"
@@ -130,9 +130,9 @@ void update_boat_status (int sts, int pos, Boat& boat, int boat_id){
         boat.load = 0;
     }    //船到虚拟点,清空载货
 
-    if (base_DS::id > 1){
-        boat.id_dest_in_plan = choose_a_berth(boat);
-    }
+//    if (base_DS::id >= 1){
+//        boat.id_dest_in_plan = base_DS::scheduler->choose_a_berth(boat);
+//    }
 }
 
 void update_berth_status(){

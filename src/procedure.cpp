@@ -5,11 +5,7 @@
 #include "procedure.h"
 #include "data_structure.h"
 #include "commands.h"
-#include "should_go_now.h"
-#include "choose_a_berth.h"
-
-#include "should_ship_now.h"
-
+#include <fstream>
 
 // 现在装卸货的时候不会再移动
 void Procedure::do_procedure() {
@@ -64,24 +60,29 @@ void Procedure::do_procedure() {
 
     for (int i = 0; i < base_DS::boat_num; i++) {
         // 决定是否前往虚拟点
-        if (should_go_now(base_DS::boat[i])) {
+        if (base_DS::scheduler->should_go_now(base_DS::boat[i])) {
             std::cout << get_GO_command(i);
-        } else if (should_ship_now(base_DS::boat[i])) {
-            if (base_DS::boat[i].id_dest_in_plan != -1)
+            std::ofstream file("num_go.txt", std::ios::out | std::ios::app);
+            file << "id " << base_DS::id << endl;
+            file << "boat " << i << endl;
+            file << "goods_carried " << base_DS::boat[i].load << endl;
+            file << "berth_stayed " << base_DS::boat[i].id_dest_on_the_way << endl;
+            file.close();
+        } else if (base_DS::scheduler->should_ship_now(base_DS::boat[i])) {
+            base_DS::boat[i].id_dest_in_plan = base_DS::scheduler->choose_a_berth(base_DS::boat[i]);
+            if (base_DS::boat[i].id_dest_in_plan != -1){
                 std::cout << get_SHIP_command(i, base_DS::boat[i].id_dest_in_plan);
+                std::ofstream file("ship_id.txt", std::ios::out | std::ios::app);
+                file << "id " << base_DS::id << endl;
+                file << "boat " << i << endl;
+                file << "goods_carried " << base_DS::boat[i].load << endl;
+                file << "from " << base_DS::boat[i].id_dest_on_the_way << endl;
+                file << "to " << base_DS::boat[i].id_dest_in_plan << endl;
+                file.close();
+            }
         } else {
             //在装货，或者在途中
         }
     }
-
-//        if (should_go_now(base_DS::boat[i])){
-//            std::cout << get_GO_command(i);
-//        }else if (base_DS::boat[i].id_dest==-1){
-//            int berth_id = choose_a_berth(base_DS::boat[i]);                //复杂调度策略
-////            int berth_id = choose_a_berth(base_DS::boat[i], i);  //简单调度策略
-//            if (0 <= berth_id && berth_id < base_DS::berth_num){
-//                std::cout << get_SHIP_command(i, berth_id);
-//            }
-//        }
-
 }
+
