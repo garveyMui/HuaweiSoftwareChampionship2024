@@ -44,6 +44,9 @@ void Robot::_set_area(int startX, int startY) {
                       startY-this->diameter_area,
                       startY+this->diameter_area);
 }
+void Robot::_set_area(Area area) {
+    this->area = area;
+}
 
 // 判断是否会对撞或者撞停在原地的机器人
 bool Robot::will_hit() {
@@ -89,7 +92,7 @@ Direction Robot::get_move() {
     if (this->path.empty()){
         return {-1,-1};
     }
-    Position attempt = this->path.front();
+    Position& attempt = this->path.front();
     int delta_x = attempt.x-this->posi.x;
     int delta_y = attempt.y-this->posi.y;
     return Direction(delta_x, delta_y);

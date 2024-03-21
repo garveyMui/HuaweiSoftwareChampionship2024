@@ -16,36 +16,42 @@ bool should_ship_now(Boat& boat){
         return true;
     }
 
+    if(boat.status==1 && boat.id_dest_in_plan!=boat.id_dest_on_the_way){
+        return base_DS::berth[boat.id_dest_on_the_way].queue_goods_value.empty();
+    }
+
 //    if(base_DS::id > 10000){
 //        return false;
 //    }
 
-    // 计划泊位有更多货物，且移动消耗是值得的
-    int move_between_berths = 500;
-    int mean_value_per_goods = 50;
-    int mean_frames_per_goods = 70;
-    int capacity = boat.capacity;
-    if (boat.status==1 && boat.last_status==1){
-        int num_goods_current_berth = base_DS::berth[boat.id_dest_on_the_way].queue_goods_value.size();
-        if (num_goods_current_berth+move_between_berths/mean_frames_per_goods >= capacity-boat.load){
-            return false;
-        }
-        int num_goods_plan_berth = base_DS::berth[boat.id_dest_in_plan].queue_goods_value.size();
-//        if (num_goods_plan_berth >= num_goods_current_berth+move_between_berths/base_DS::berth[boat.id_dest_in_plan].loading_speed){
+//    // 计划泊位有更多货物，且移动消耗是值得的
+//    int move_between_berths = 500;
+//    int mean_value_per_goods = 50;
+//    int mean_frames_per_goods = 70;
+//    int capacity = boat.capacity;
+//    if (boat.status==1 && boat.last_status==1){
+//        int num_goods_current_berth = base_DS::berth[boat.id_dest_on_the_way].queue_goods_value.size();
+//        if (num_goods_current_berth+move_between_berths/mean_frames_per_goods >= capacity-boat.load){
+//            return false;
+//        }
+//        int num_goods_plan_berth = base_DS::berth[boat.id_dest_in_plan].queue_goods_value.size();
+////        if (num_goods_plan_berth >= num_goods_current_berth+move_between_berths/base_DS::berth[boat.id_dest_in_plan].loading_speed){
+////            return true;
+////        }
+//        int delta2image_point = base_DS::berth[boat.id_dest_in_plan].transport_time-base_DS::berth[boat.id_dest_on_the_way].transport_time;
+//        if (num_goods_plan_berth > capacity-boat.load+(move_between_berths+delta2image_point)/mean_frames_per_goods){
 //            return true;
 //        }
-        int delta2image_point = base_DS::berth[boat.id_dest_in_plan].transport_time-base_DS::berth[boat.id_dest_on_the_way].transport_time;
-        if (num_goods_plan_berth > capacity-boat.load+(move_between_berths+delta2image_point)/mean_frames_per_goods){
-            return true;
-        }
-        if(base_DS::berth[boat.id_dest_on_the_way].queue_goods_value.size() == 0){//当前港口已无货物可装载并且装有货物
-            return true;
-        }
+//        if(base_DS::berth[boat.id_dest_on_the_way].queue_goods_value.size() == 0){//当前港口已无货物可装载并且装有货物
+//            return true;
+//        }
+//    }
+
 //        if (base_DS::id >= 13000 && !boat.final_change){
 //            boat.final_change = true;
 //            return true;
 //        }
-    }
+
 
 
     /**可能有问题**/
