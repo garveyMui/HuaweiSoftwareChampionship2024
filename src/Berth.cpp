@@ -45,7 +45,7 @@ vector<Area> areas = {Area(0,50,0,100),
 void Berth::_init_cells(){
     auto getter = ShortestPathGetter();
     getter.set_cells_berth(this->area.center, this->cells, this->connection, this->territories);
-    this->set_territories(areas[this->id]);
+//    this->set_territories(areas[this->id]);
 }
 Berth::Berth() {
 
@@ -76,11 +76,12 @@ void Berth::point2berth(Position point, Path &path) {
 }
 
 Position Berth::get_goods_posi() {
-    int max_value = 0;
+    double max_value = 0;
     Position res;
     for (auto iter = territories.begin(); iter != territories.end(); iter++){
-        if(iter->second>max_value){
-            max_value = iter->second;
+        double cur_value = iter->second/(this->cells[iter->first.x][iter->first.y].level+1.0);
+        if(cur_value>max_value){
+            max_value = cur_value;
             res = iter->first;
         }
     }
