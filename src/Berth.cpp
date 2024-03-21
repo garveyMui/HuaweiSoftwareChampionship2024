@@ -45,7 +45,7 @@ vector<Area> areas = {Area(0,50,0,100),
 void Berth::_init_cells(){
     auto getter = ShortestPathGetter();
     getter.set_cells_berth(this->area.center, this->cells, this->connection, this->territories);
-//    this->set_territories(areas[this->id]);
+    this->set_territories(areas[this->id]);
 }
 Berth::Berth() {
 
