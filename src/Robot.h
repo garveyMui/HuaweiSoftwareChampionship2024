@@ -74,6 +74,7 @@ public:
     bool decide_to_load();
     bool decide_to_unload();
 
+    void _set_area(Area area);
 };// Robot
 
 #endif
